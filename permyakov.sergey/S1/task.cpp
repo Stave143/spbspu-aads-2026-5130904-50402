@@ -51,14 +51,14 @@ namespace permyakov
     idList.push_front(0);
     LIter< size_t > iterIdList = idList.begin();
     LCIter< pair_t > iterList = list.beginC();
-    for (size_t i = 0; i< list.size(); ++i) {
+    for (size_t i = 0; i < list.size(); ++i) {
       List< size_t > iList = (*(iterList)).second;
       ++iterList;
-      if (iList.size()<= id) {
+      if (iList.size() <= id) {
         continue;
       }
       LCIter< size_t > iIterList = iList.beginC();
-      for (size_t j = 0; j< id; ++j) {
+      for (size_t j = 0; j < id; ++j) {
         ++iIterList;
       }
       idList.insert_after(iterIdList, *iIterList);
@@ -72,7 +72,7 @@ namespace permyakov
   {
     size_t result = 0;
     LCIter< size_t > iterList = list.beginC();
-    for (size_t i = 0; i< list.size(); ++i) {
+    for (size_t i = 0; i < list.size(); ++i) {
       if (MAX_NUM - result >= *iterList) {
         result += *iterList;
       } else {
@@ -89,11 +89,11 @@ namespace permyakov
       return;
     }
     LCIter< pair_t > iterList = list.beginC();
-    for (size_t i = 1; i< list.size(); ++i) {
-      out<< (*iterList).first<< ' ';
+    for (size_t i = 1; i < list.size(); ++i) {
+      out << (*iterList).first << ' ';
       ++iterList;
     }
-    out<< (*iterList).first<< '\n';
+    out << (*iterList).first << '\n';
   }
 
   void outputNum(std::ostream & out, const List< size_t > & list)
@@ -102,10 +102,10 @@ namespace permyakov
       return;
     }
     LCIter< size_t > iterList = list.beginC();
-    for (size_t i = 1; i< list.size(); ++i) {
-      out<< *iterList<< ' ';
+    for (size_t i = 1; i < list.size(); ++i) {
+      out << *iterList << ' ';
       ++iterList;
     }
-    out<< *iterList<< '\n';
+    out << *iterList << '\n';
   }
 }

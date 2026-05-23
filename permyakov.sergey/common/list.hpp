@@ -48,7 +48,7 @@ namespace permyakov
     if (!scndList.isEmpty()) {
       push_front(scndList.front());
       LIter< T > iter = begin();
-      for (LCIter< T > iIter = scndList.beginC(); size_< scndList.size_; ++iter) {
+      for (LCIter< T > iIter = scndList.beginC(); size_ < scndList.size_; ++iter) {
         ++iIter;
         insert_after(iter, *iIter);
       }
