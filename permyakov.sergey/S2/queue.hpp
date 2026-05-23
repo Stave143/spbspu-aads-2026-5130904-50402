@@ -1,42 +1,44 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
+#include <cstddef>
+#include "list.hpp"
 #include "iterators.hpp"
 
 namespace permyakov
 {
-  template< class T > class queue
+  template< class T > class Queue
   {
-    void push(const T value);
-    void pop();
-    T front();
-    size_t size();
-    bool isEmpty();
-    private:
-      List< T > data;
+    List< T > data;
+    public:
+      void push(const T value);
+      void pop();
+      T front();
+      size_t size();
+      bool isEmpty();
   };
 
-  template< class T > void queue< T >::push(const T value)
+  template< class T > void Queue< T >::push(const T value)
   {
-    LIter< T > endIter = date.end();
+    LIter< T > endIter = data.end();
     data.insert_after(endIter, value);
   }
 
-  template< class T > void queue< T > ::pop()
+  template< class T > void Queue< T > ::pop()
   {
     data.pop_front();
   }
 
-  template< class T > T queue< T >::front()
+  template< class T > T Queue< T >::front()
   {
     return data.front();
   }
 
-  template< class T > size_t queue< T >::size()
+  template< class T > size_t Queue< T >::size()
   {
     return data.size();
   }
 
-  template< class T > bool queue< T >::isEmpty()
+  template< class T > bool Queue< T >::isEmpty()
   {
     return !size();
   }

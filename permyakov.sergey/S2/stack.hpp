@@ -1,41 +1,43 @@
 #ifndef STACK_HPP
 #define STACK_HPP
+#include <cstddef>
+#include "list.hpp"
 #include "iterators.hpp"
 
 namespace permyakov
 {
-  template< class T > class queue
+  template< class T > class Stack
   {
-    void push(const T value);
-    void pop();
-    T top();
-    size_t size();
-    bool isEmpty();
-    private:
-      List< T > data;
+    List< T > data;
+    public:
+      void push(const T value);
+      void pop();
+      T top();
+      size_t size();
+      bool isEmpty();
   };
 
-  template< class T > void queue< T >::push(const T value)
+  template< class T > void Stack< T >::push(const T value)
   {
     data.push_front(value);
   }
 
-  template< class T > void queue< T > ::pop()
+  template< class T > void Stack< T > ::pop()
   {
     data.pop_front();
   }
 
-  template< class T > T queue< T >::top()
+  template< class T > T Stack< T >::top()
   {
     return data.front();
   }
 
-  template< class T > size_t queue< T >::size()
+  template< class T > size_t Stack< T >::size()
   {
     return data.size();
   }
 
-  template< class T > bool queue< T >::isEmpty()
+  template< class T > bool Stack< T >::isEmpty()
   {
     return !size();
   }
