@@ -19,8 +19,12 @@ namespace permyakov
 
   template< class T > void Queue< T >::push(const T value)
   {
-    LIter< T > endIter = data.end();
-    data.insert_after(endIter, value);
+    if (data.isEmpty()) {
+      data.push_front(value);
+    } else {
+      LIter< T > endIter = data.end();
+      data.insert_after(endIter, value);
+    }
   }
 
   template< class T > void Queue< T > ::pop()
