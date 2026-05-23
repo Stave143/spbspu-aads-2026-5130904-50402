@@ -5,12 +5,8 @@
 
 namespace permyakov
 {
-  bool isNum(const std::string elm);
-  size_t toNum(const std::string elm);
-  bool isOp(const std::string elm);
-  bool isItPriority(const std::string elm1, const std::string elm2);
+  size_t getPriority(const std::string elm);
 
-  Queue< std::string > check(Queue< std::string > exc);
   Queue< std::string > convertToPostfix(Queue< std::string > exc);
 
   size_t sum(const std::string elm1, const std::string elm2);
