@@ -1,7 +1,11 @@
 #ifndef CALCULATE_HPP
 #define CALCULATE_HPP
 #include <string>
+#include <limits>
 #include "queue.hpp"
+
+const long long MAX = std::numeric_limits< long long >::max();
+const long long MIN = std::numeric_limits< long long >::min();
 
 namespace permyakov
 {
@@ -9,13 +13,14 @@ namespace permyakov
 
   Queue< std::string > convertToPostfix(Queue< std::string > exc);
 
-  size_t sum(const std::string elm1, const std::string elm2);
-  size_t sub(const std::string elm1, const std::string elm2);
-  size_t mult(const std::string elm1, const std::string elm2);
-  size_t dec(const std::string elm1, const std::string elm2);
-  size_t mod(const std::string elm1, const std::string elm2);
-  size_t x_or(const std::string elm);
-  size_t calclulate(Queue< std::string > exc);
+  long long sum(const long long elm1, const long long elm2);
+  long long sub(const long long elm1, const long long elm2);
+  long long mult(const long long elm1, const long long elm2);
+  long long div(const long long elm1, const long long elm2);
+  long long mod(const long long elm1, const long long elm2);
+  long long x_or(const long long elm1, const long long elm2);
+  long long binCalculate(const std::string op, const long long elm1, const long long elm2);
+  long long calculateException(Queue< std::string > exc);
 }
 
 #endif
