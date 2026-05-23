@@ -1,7 +1,6 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 #include "iterators.hpp"
-#include <cstddef>
 
 namespace permyakov
 {
