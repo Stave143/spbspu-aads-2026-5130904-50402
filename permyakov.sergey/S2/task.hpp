@@ -1,5 +1,5 @@
-#ifndef CALCULATE_HPP
-#define CALCULATE_HPP
+#ifndef TASK_HPP
+#define TASK_HPP
 #include <string>
 #include <iosfwd>
 #include <iostream>
