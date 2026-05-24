@@ -24,10 +24,6 @@ int main(int argc, char **argv)
   std::istream &is = (argc == 2) ? file : std::cin;
   per::Queue< per::Queue< std::string > > expressions = per::input(is);
   per::Stack< long long > result;
-  if (expressions.isEmpty()) {
-    std::cerr << "Empty input\n";
-    return 1;
-  }
   try {
     while (!expressions.isEmpty()) {
       per::Queue< std::string > postfix = per::convertToPostfix(expressions.front());
@@ -41,4 +37,5 @@ int main(int argc, char **argv)
   if (!result.isEmpty()) {
     per::output(std::cout, result);
   }
+  std::cout << '\n';
 }

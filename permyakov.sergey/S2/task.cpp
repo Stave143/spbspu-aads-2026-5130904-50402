@@ -37,7 +37,6 @@ namespace permyakov
       out << ' '<< stk.top();
       stk.pop();
     }
-    out << '\n';
   }
 }
 
