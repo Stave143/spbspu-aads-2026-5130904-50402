@@ -128,13 +128,13 @@ namespace permyakov
     if (op == "+") {
       return sum(elm1, elm2);
     } else if (op == "-") {
-      return sum(elm1, elm2);
+      return sub(elm1, elm2);
     } else if (op == "*") {
-      return sum(elm1, elm2);
+      return mult(elm1, elm2);
     } else if (op == "/") {
-      return sum(elm1, elm2);
+      return div(elm1, elm2);
     } else if (op == "%") {
-      return sum(elm1, elm2);
+      return mod(elm1, elm2);
     } else if (op == "^") {
       return x_or(elm1, elm2);
     }
