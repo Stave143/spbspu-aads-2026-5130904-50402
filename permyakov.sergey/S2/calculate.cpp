@@ -141,7 +141,7 @@ namespace permyakov
     throw std::invalid_argument("Unknown operator");
   }
 
-  long long calculateException(Queue< std::string > exc)
+  long long calculateExpression(Queue< std::string > exc)
   {
     Stack< long long > stk;
     while (!exc.isEmpty()) {

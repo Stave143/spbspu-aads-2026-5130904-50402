@@ -28,13 +28,15 @@ namespace permyakov
     return result;
   }
 
-  void output(std::ostream & out, Queue< long long > que)
+  void output(std::ostream & out, Stack< long long > stk)
   {
-    while (!que.isEmpty()) {
-      std::cout << que.front() << ' ';
-      que.pop();
+    out << stk.top();
+    stk.pop();
+    while (!stk.isEmpty()) {
+      out << ' '<< stk.top();
+      stk.pop();
     }
-    std::cout << '\n';
+    out << '\n';
   }
 }
 

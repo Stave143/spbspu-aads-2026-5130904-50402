@@ -20,7 +20,7 @@ namespace permyakov
   long long mod(const long long elm1, const long long elm2);
   long long x_or(const long long elm1, const long long elm2);
   long long binCalculate(const std::string op, const long long elm1, const long long elm2);
-  long long calculateException(Queue< std::string > exc);
+  long long calculateExpression(Queue< std::string > exc);
 }
 
 #endif
