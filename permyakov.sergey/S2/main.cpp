@@ -24,10 +24,15 @@ int main(int argc, char **argv)
   std::istream &is = (argc == 2) ? file : std::cin;
   per::Queue< per::Queue< std::string > > expressions = per::input(is);
   per::Stack< long long > result;
-  while (!expressions.isEmpty()) {
-    per::Queue< std::string > postfix = per::convertToPostfix(expressions.front());
-    expressions.pop();
-    result.push(per::calculateExpression(postfix));
+  try {
+    while (!expressions.isEmpty()) {
+      per::Queue< std::string > postfix = per::convertToPostfix(expressions.front());
+      expressions.pop();
+      result.push(per::calculateExpression(postfix));
+    }
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
+    return 1;
   }
   if (!result.isEmpty()) {
     per::output(std::cout, result);
