@@ -23,6 +23,7 @@ namespace permyakov
           element += c;
         }
       }
+      exc.push(element);
       result.push(exc);
     }
     return result;

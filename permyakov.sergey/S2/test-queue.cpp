@@ -27,9 +27,12 @@ BOOST_AUTO_TEST_CASE(test_front)
   Queue< int > que;
   que.push(1);
   que.push(2);
+  que.push(3);
   BOOST_CHECK_EQUAL(que.front(), 1);
   que.pop();
   BOOST_CHECK_EQUAL(que.front(), 2);
+  que.pop();
+  BOOST_CHECK_EQUAL(que.front(), 3);
 }
 
 BOOST_AUTO_TEST_CASE(test_size)

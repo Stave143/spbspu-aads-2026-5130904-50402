@@ -54,6 +54,10 @@ namespace permyakov
       }
       exc.pop();
     }
+    while (!stk.isEmpty()) {
+      result.push(stk.top());
+      stk.pop();
+    }
     return result;
   }
 

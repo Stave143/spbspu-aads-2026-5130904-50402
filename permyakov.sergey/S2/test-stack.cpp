@@ -27,6 +27,9 @@ BOOST_AUTO_TEST_CASE(test_top)
   Stack< int > stk;
   stk.push(1);
   stk.push(2);
+  stk.push(3);
+  BOOST_CHECK_EQUAL(stk.top(), 3);
+  stk.pop();
   BOOST_CHECK_EQUAL(stk.top(), 2);
   stk.pop();
   BOOST_CHECK_EQUAL(stk.top(), 1);

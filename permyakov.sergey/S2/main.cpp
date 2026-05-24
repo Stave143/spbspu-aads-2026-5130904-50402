@@ -22,7 +22,6 @@ int main(int argc, char **argv)
     }
   }
   std::istream &is = (argc == 2) ? file : std::cin;
-
   per::Queue< per::Queue< std::string > > expressions = per::input(is);
   per::Stack< long long > result;
   while (!expressions.isEmpty()) {

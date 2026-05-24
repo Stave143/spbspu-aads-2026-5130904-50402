@@ -22,8 +22,11 @@ namespace permyakov
     if (data.isEmpty()) {
       data.push_front(value);
     } else {
-      LIter< T > endIter = data.end();
-      data.insert_after(endIter, value);
+      LIter< T > iter = data.begin();
+      for (size_t i = 1; i < data.size(); ++i) {
+        ++iter;
+      }
+      data.insert_after(iter, value);
     }
   }
 
