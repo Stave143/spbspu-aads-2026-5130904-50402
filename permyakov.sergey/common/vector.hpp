@@ -27,12 +27,10 @@ namespace permyakov
 
       T & operator[](size_t id) noexcept;
       const T & operator[](size_t id) const noexcept;
-      T & at(size_t id);
-      const T & at(size_t id) const;
 
-      bool isEmpty() const noexcept;
       size_t size() const noexcept;
       size_t capasity() const noexcept;
+      bool isEmpty() const noexcept;
 
       void reserve(size_t cap);
       void swap(Vector< T > &rhs) noexcept;
@@ -59,21 +57,20 @@ namespace permyakov
       VCIter< T > cbegin() const;
       VCIter< T > cend() const;
   };
-}
 
-  template< class T > permyakov::Vector< T >::Vector():
+  template< class T > Vector< T >::Vector():
     data_(nullptr),
     size_(0),
     capasity_(0)
   {}
 
-  template< class T > permyakov::Vector< T >::Vector(size_t k):
+  template< class T > Vector< T >::Vector(size_t k):
     data_(static_cast< T * >(::operator new(sizeof(T) * k))),
     size_(0),
     capasity_(k)
   {}
 
-  template< class T > permyakov::Vector< T >::Vector(const Vector< T > & scnd):
+  template< class T > Vector< T >::Vector(const Vector< T > & scnd):
     Vector(scnd.size())
   {
     while (size_ < scnd.size()) {
@@ -82,7 +79,7 @@ namespace permyakov
     }
   }
 
-  template< class T > permyakov::Vector< T >::Vector(Vector< T > && scnd) noexcept:
+  template< class T > Vector< T >::Vector(Vector< T > && scnd) noexcept:
     data_(scnd.data_),
     size_(scnd.size_),
     capasity_(scnd.capasity_)
@@ -92,7 +89,7 @@ namespace permyakov
     scnd.capasity_ = 0;
   }
 
-  template< class T > permyakov::Vector< T > & permyakov::Vector< T >::operator=(const Vector< T > & scnd)
+  template< class T > Vector< T > & Vector< T >::operator=(const Vector< T > & scnd)
   {
     if (this == std::addressof(scnd)) {
       return *this;
@@ -102,7 +99,7 @@ namespace permyakov
     return *this;
   }
 
-  template< class T > permyakov::Vector< T > & permyakov::Vector< T >::operator=(Vector< T > && scnd) noexcept
+  template< class T > Vector< T > & Vector< T >::operator=(Vector< T > && scnd) noexcept
   {
     if (this == std::addressof(scnd)) {
       return *this;
@@ -112,17 +109,87 @@ namespace permyakov
     return *this;
   }
 
-  template< class T > permyakov::Vector< T >::~Vector()
+  template< class T > Vector< T >::~Vector()
   {
     clear(date_, size_);
   }
 
-  template< class T > permyakov::Vector< T >::Vector(std::initializer_list< T > il):
+  template< class T > Vector< T >::Vector(std::initializer_list< T > il):
     Vector(il.size())
   {
     for (auto && v : il) {
       new (data_ + size_++) T(std::move(v));
     } 
   }
+
+  template< class T > T & Vector< T >::operator[](size_t id) noexcept
+  {
+    assert(id < size());
+    return data_[id];
+  }
+
+  template< class T > const T & Vector< T >::operator[](size_t id) const noexcept
+  {
+    assert(id < size());
+    return data_[id];
+  }
+
+  template< class T > size_t Vector< T >::size() const noexcept
+  {
+    return size_;
+  }
+
+  template< class T > size_t Vector< T >::capasity() const noexcept
+  {
+    return capasity_;
+  }
+
+  template< class T > bool Vector< T >::isEmpty() const noexcept
+  {
+    return !size_;
+  }
+
+  template< class T > void Vector< T >::reserve(size_t cap)
+  {
+    if (capacity_ >= cap) {
+      return;
+    }
+    size_t k = 0;
+    T * nd = static_cast< T * >(::operator new(sizeof(T) * cap));
+    try {
+      while (k < size()) {
+        new (nd + k) T(std::move(data_[k]));
+        ++k;
+      }
+    } catch (...) {
+      for (size_t i = 0; i < k; ++i) {
+        nd[i].~T();
+      }
+      ::operator delete(nd);
+      throw;
+    }
+    for (size_t i = 0; i < size_; ++i) {
+      data_[i].~T();
+    }
+    ::operator delete(data_);
+    data_ = nd;
+    capacity_ = cap;
+  }
+
+  template< class T > void Vector< T >::swap(Vector< T > & scnd) noexcept
+  {
+    std::swap(scnd.data_, data_);
+    std::swap(scnd.capacity_, capacity_);
+    std::swap(scnd.size_, size_);
+  }
+
+  template< class T > void clear(T *data, size_t cnt)
+  {
+    for (size_t j = 0; j < cnt; ++j) {
+      data[j].~T();
+    }
+    ::operator delete(data);
+  }
+}
 
 #endif
