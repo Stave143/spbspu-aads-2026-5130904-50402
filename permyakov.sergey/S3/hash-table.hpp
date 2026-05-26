@@ -6,7 +6,7 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
-#include "Vector.hpp"
+#include "vector.hpp"
 #include "list.hpp"
 #include "hasher.hpp"
 

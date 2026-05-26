@@ -35,9 +35,9 @@ namespace permyakov
       void reserve(size_t cap);
       void swap(Vector< T > &rhs) noexcept;
 
-      void pushFront(const T &);
+      void pushFront(const T & val);
       void popFront();
-      void pushBack(const T &);
+      void pushBack(const T & val);
       void popBack();
 
       void insert(size_t i, const T &val);
@@ -155,24 +155,18 @@ namespace permyakov
       return;
     }
     size_t k = 0;
-    T * nd = static_cast< T * >(::operator new(sizeof(T) * cap));
+    T * newData = static_cast< T * >(::operator new(sizeof(T) * cap));
     try {
       while (k < size()) {
-        new (nd + k) T(std::move(data_[k]));
+        new (newData + k) T(std::move(data_[k]));
         ++k;
       }
     } catch (...) {
-      for (size_t i = 0; i < k; ++i) {
-        nd[i].~T();
-      }
-      ::operator delete(nd);
+      clear(newData, k);
       throw;
     }
-    for (size_t i = 0; i < size_; ++i) {
-      data_[i].~T();
-    }
-    ::operator delete(data_);
-    data_ = nd;
+    clear(data_, size_);
+    data_ = newData;
     capacity_ = cap;
   }
 
@@ -183,10 +177,50 @@ namespace permyakov
     std::swap(scnd.size_, size_);
   }
 
+  template< class T > void Vector< T >::pushFront(const T & val)
+  {
+    if (size_ == capasity_) {
+      size_t newCap = capasity_ == 0 ? 1 : capasity_ * 2;
+      reserve(newCap);
+    }
+    ++size_;
+    for (size_t i = size_ - 1; i > 0; --i) {
+      new (data + i) T(std::move(data_[i - 1]));
+      data[i - 1].~T();
+    }
+    new data_ T(val);
+  }
+
+  template< class T > void Vector< T >::popFront()
+  {
+    data.~T();
+    for (size_t i = 0; i < size_ - 1; ++i) {
+      new (data + i) T(std::move(data_[i + 1]));
+      data[i + 1].~T();
+    }
+    --size_;
+  }
+
+  template< class T > void Vector< T >::pushBack(const T & val)
+  {
+    if (size_ == capasity_) {
+      size_t newCap = capasity_ == 0 ? 1 : capasity_ * 2;
+      reserve(newCap);
+    }
+    ++size_;
+    new (data_ + size_) T(val);
+  }
+
+  template< class T > void Vector< T >::popBack()
+  {
+    data[size_ - 1].~T();
+    --size_;
+  }
+
   template< class T > void clear(T *data, size_t cnt)
   {
-    for (size_t j = 0; j < cnt; ++j) {
-      data[j].~T();
+    for (size_t i = 0; i < cnt; ++j) {
+      data[i].~T();
     }
     ::operator delete(data);
   }
