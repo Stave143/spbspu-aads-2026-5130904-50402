@@ -40,13 +40,10 @@ namespace permyakov
       void pushBack(const T & val);
       void popBack();
 
-      void insert(size_t i, const T &val);
-      void insert(size_t i, const Vector< T > &rhs, size_t beg, size_t end);
-      void insert(const T &value, size_t count, VIter< T > pos);
-      void insert(VIter< T > pos, VIter< T > beg, VIter< T > end);
-      void insert(VIter< T > pos, const T &value);
+      void insert(size_t idx, const T & val);
+      void insert(VIter< T > pos, const T & value);
 
-      void erase(size_t i);
+      void erase(size_t idx);
       void erase(size_t beg, size_t end);
       void erase(VIter< T > pos);
       void erase(VIter< T > beg, VIter< T > end);
@@ -179,26 +176,12 @@ namespace permyakov
 
   template< class T > void Vector< T >::pushFront(const T & val)
   {
-    if (size_ == capasity_) {
-      size_t newCap = capasity_ == 0 ? 1 : capasity_ * 2;
-      reserve(newCap);
-    }
-    ++size_;
-    for (size_t i = size_ - 1; i > 0; --i) {
-      new (data + i) T(std::move(data_[i - 1]));
-      data[i - 1].~T();
-    }
-    new data_ T(val);
+    insert(0, val);
   }
 
   template< class T > void Vector< T >::popFront()
   {
-    data.~T();
-    for (size_t i = 0; i < size_ - 1; ++i) {
-      new (data + i) T(std::move(data_[i + 1]));
-      data[i + 1].~T();
-    }
-    --size_;
+    erase(0);
   }
 
   template< class T > void Vector< T >::pushBack(const T & val)
@@ -207,14 +190,122 @@ namespace permyakov
       size_t newCap = capasity_ == 0 ? 1 : capasity_ * 2;
       reserve(newCap);
     }
-    ++size_;
-    new (data_ + size_) T(val);
+    new (data_ + size_++) T(val);
   }
 
   template< class T > void Vector< T >::popBack()
   {
+    if (isEmpty()) {
+      throw std::logic_error("Empty vector");
+    }
     data[size_ - 1].~T();
     --size_;
+  }
+
+  template< class T > void Vector< T >::insert(size_t idx, const T & val)
+  {
+    if (size_ == capasity_) {
+      size_t newCap = capasity_ == 0 ? 1 : capasity_ * 2;
+      reserve(newCap);
+    }
+    ++size_;
+    for (size_t i = size_ - 1; i > idx; --i) {
+      new (data + i) T(std::move(data_[i - 1]));
+      data[i - 1].~T();
+    }
+    new (data_ + idx) T(val);
+  }
+
+  template< class T > void Vector< T >::insert(VIter< T > pos, const T & value)
+  {
+    insert(pos.getIdx() + 1, val);
+  }
+
+  template< class T > void Vector< T >::erase(size_t idx)
+  {
+    if (isEmpty()) {
+      throw std::logic_error("Empty vector");
+    }
+    data[idx].~T();
+    for (size_t i = idx; i < size_ - 1; ++i) {
+      new (data + i) T(std::move(data_[i + 1]));
+      data[i + 1].~T();
+    }
+    --size_;
+  }
+
+  template< class T > void Vector< T >::erase(size_t beg, size_t end)
+  {
+    if (isEmpty()) {
+      throw std::logic_error("Empty vector");
+    }
+    if (end < beg) {
+      throw std::logic_error("Wrong index");
+    }
+    size_t dif = end - beg;
+    for (size_t i = beg; i < size_ - dif; ++i) {
+      data[i].~T();
+      new (data + i) T(std::move(data_[i + dif]));
+      data[i + dif].~T();
+    }
+    size_ -= dif;
+  }
+
+  template< class T > void Vector< T >::erase(VIter< T > pos)
+  {
+    erase(pos.getIdx());
+    if (size_ && pos.gerIdx() == size_) {
+      --pos;
+    }
+  }
+
+  template< class T > void Vector< T >::erase(VIter< T > beg, VIter< T > end)
+  {
+    erase(beg.getIdx(), end.getIdx());
+    if (size_ && beg.gerIdx() == size_) {
+      --beg;
+    }
+    end = beg;
+  }
+
+  template< class T > void Vector< T >::erase(VIter< T > pos, size_t count)
+  {
+    erase(pos.getIdx(), pos.getIdx() + count);
+    if (size_ && pos.gerIdx() == size_) {
+      --pos;
+    }
+  }
+
+  template< class T > VIter< T > Vector< T >::begin()
+  {
+    if (isEmpty()) {
+      throw std::logic_error("Empty vector");
+    }
+    return VIter< T > (data_);
+  }
+
+  template< class T > VIter< T > Vector< T >::end()
+  {
+    if (isEmpty()) {
+      throw std::logic_error("Empty vector");
+    }
+    return VIter< T > (data_ + size_ - 1);
+  }
+
+  template< class T > VCIter< T > Vector< T >::cbegin() const
+  {
+    if (isEmpty()) {
+      throw std::logic_error("Empty vector");
+    }
+    return VCIter< T > (data_);
+  }
+
+  template< class T > VCIter< T > Vector< T >::cend() const
+  {
+    if (isEmpty()) {
+      throw std::logic_error("Empty vector");
+    }
+    return VCIter< T > (data_ + size_ - 1);
   }
 
   template< class T > void clear(T *data, size_t cnt)
@@ -224,6 +315,9 @@ namespace permyakov
     }
     ::operator delete(data);
   }
+
+  template< class T > class VIter;
+  template< class T > class VCIter;
 }
 
 #endif
