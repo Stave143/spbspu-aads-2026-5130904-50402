@@ -1,10 +1,10 @@
 #include <iostream>
 #include <limits>
-#include "manager.hpp"
+#include "operations.hpp"
 
 int main()
 { 
-  using cmd_t = void(*)(std::ostream &, std::istream &, );
+  using cmd_t = void(*)(std::ostream &, permyakov::Manager &);
   permyakov::RobinTable< std::string, cmd_t> cmds(10);
   
   cmds.add("bin", permyakov::bin);
@@ -18,13 +18,18 @@ int main()
   cmds.add("bayes", permyakov::bayes);
   cmds.add("delete", permyakov::deleteS);
 
+  spc_t table();
+  permyakov::Manager manager("spaces.txt", table, std::cout);
+
+  std::string cmd;
   while (std::cin >> cmd) {
     try {
       if (std::cin.fail()) {
         std::cin.clear(std::cin.rdstate() & ~std::ios::failbit);
         std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
       }
-      cmds.get(cmd)(std::cin, std::cout, "spaces.txt");
+      manager.loadFile();
+      cmds.get(cmd)(std::cin, manager);
       std::cout << '\n';
     } catch (const std::exception &e) {
       std::cout << e.what() << '\n';

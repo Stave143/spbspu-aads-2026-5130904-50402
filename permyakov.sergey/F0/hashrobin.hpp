@@ -99,7 +99,7 @@ permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable(std::initializer_li
 
 template< class Key, class Value, class Hash, class Equal >
 permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable():
-  RobinTable(16)
+  RobinTable(8)
 {}
 
 template< class Key, class Value, class Hash, class Equal >

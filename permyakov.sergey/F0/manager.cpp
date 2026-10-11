@@ -10,10 +10,6 @@ spc_t & permyakov::Manager::getSpaces() {
   return *spaces;
 }
 
-src_t permyakov::Manager::getSource() {
-  return source;
-}
-
 void permyakov::Manager::parseLine(std::string line) {
   std::istringstream iline(line);
   std::string name;
@@ -25,7 +21,6 @@ void permyakov::Manager::parseLine(std::string line) {
   while (iline >> s) {
     if(iline >> n) {
       events.add(s, n);
-      source.add(s, name);
     } else {
       std::invalid_argument("Сorrupted file");
     }
@@ -57,16 +52,20 @@ void permyakov::Manager::saveToFile()
   if (!file.is_open()) {
     throw std::invalid_argument("None filename");
   }
-  permyakov::RobinIter < std::string, evn_t > itS(spaces);
+  permyakov::RobinIter< std::string, evn_t > itS(spaces);
   while(itS.hasNext()) {
     std::pair< std::string, evn_t > line = *itS;
     file << line.first() << ' ' << line.second().size();
-    permyakov::RobinIter < std::string, evn_t > itE(line.second());
+    permyakov::RobinIter< std::string, evn_t > itE(line.second());
+    std::pair< std::string, evn_t > event = *itE;
+    file << ' ' << line.first() << ' ' << line.first().size();
     while(itE.hasNext()) {
+      itE++;
       std::pair< std::string, evn_t > event = *itE;
       file << ' ' << line.first() << ' ' << line.first().size();
     }
     file << '\n';
+    itS++;
   }
 }
 
