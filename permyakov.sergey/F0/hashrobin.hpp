@@ -206,3 +206,34 @@ const Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k) const
   }
   throw std::invalid_argument("None key");
 }
+
+template< class Key, class Value, class Hash, class Equal >
+size_t permyakov::RobinTable< Key, Value, Hash, Equal >::size() const noexcept
+{
+  return elements;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+bool permyakov::RobinTable< Key, Value, Hash, Equal >::isEmpty() const noexcept
+{
+  return !elements;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+void permyakov::RobinTable< Key, Value, Hash, Equal >::clear() noexcept
+{
+  for (size_t i = 0; i < length; ++i) {
+    data[i].engaged = false;
+  }
+  elements = 0;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+void permyakov::RobinTable< Key, Value, Hash, Equal >::swap(RobinTable & other) noexcept
+{
+  data.swap(other.data);
+  std::swap(hasher_, other.hasher_);
+  std::swap(comparator_, other.comparator_);
+  std::swap(length, other.length);
+  std::swap(elements, other.elements);
+}
