@@ -166,3 +166,43 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::drop(Key k)
     }
   }
 }
+
+template< class Key, class Value, class Hash, class Equal >
+Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k)
+{
+  if (!has(k)) {
+    throw std::invalid_argument("None key");
+  }
+  size_t i = hasher(k) % length;
+  size_t start = i;
+  while (data[i].engaged) {
+    if (comparator(k, data[i].value.first)) {
+      return data[i].value.second;
+    }
+    i = (i + 1) % length;
+    if (i == start) {
+      throw std::invalid_argument("None key");
+    }
+  }
+  throw std::invalid_argument("None key");
+}
+
+template< class Key, class Value, class Hash, class Equal >
+const Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k) const
+{
+  if (!has(k)) {
+    throw std::invalid_argument("None key");
+  }
+  size_t i = hasher(k) % length;
+  size_t start = i;
+  while (data[i].engaged) {
+    if (comparator(k, data[i].value.first)) {
+      return data[i].value.second;
+    }
+    i = (i + 1) % length;
+    if (i == start) {
+      throw std::invalid_argument("None key");
+    }
+  }
+  throw std::invalid_argument("None key");
+}
