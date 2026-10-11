@@ -8,16 +8,18 @@
 
 using evn_t = permyakov::RobinTable< std::string, float >;
 using spc_t = permyakov::RobinTable< std::string, evn_t >;
+using src_t = permyakov::RobinTable< permyakov::RobinTable< std::string, std::string > >;
 
 namespace permyakov
 {
   class Manager
   {
-    std::string filename;
+    const std::string filename;
     spc_t spaces;
+    src_t source;
     std::istream & output;
 
-    Manager(std::string file, spc_t empTble, std::istream & out):
+    Manager(const std::string file, spc_t empTble, std::istream & out):
       filename(file),
       spaces(empTble),
       output(out)
@@ -26,7 +28,9 @@ namespace permyakov
     void parseLine(std::string line);
 
     public:
-      spc_t getSpaces();
+      std::istream & getOutput();
+      spc_t & getSpaces();
+      src_t getSource();
       void loadFile();
       void saveToFile();
   };

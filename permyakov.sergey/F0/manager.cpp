@@ -2,6 +2,18 @@
 #define MANAGER.CPP
 #include "manager.hpp"
 
+std::istream & permyakov::Manager::getOutput() {
+  return output;
+}
+
+spc_t & permyakov::Manager::getSpaces() {
+  return *spaces;
+}
+
+src_t permyakov::Manager::getSource() {
+  return source;
+}
+
 void permyakov::Manager::parseLine(std::string line) {
   std::istringstream iline(line);
   std::string name;
@@ -13,15 +25,12 @@ void permyakov::Manager::parseLine(std::string line) {
   while (iline >> s) {
     if(iline >> n) {
       events.add(s, n);
+      source.add(s, name);
     } else {
       std::invalid_argument("Сorrupted file");
     }
   }
   spaces.add(name, events);
-}
-
-spc_t permyakov::Manager::getSpaces() {
-  return spaces;
 }
 
 void permyakov::Manager::loadFile() {
