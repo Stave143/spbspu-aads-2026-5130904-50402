@@ -208,6 +208,31 @@ const Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k) const
 }
 
 template< class Key, class Value, class Hash, class Equal >
+void permyakov::RobinTable< Key, Value, Hash, Equal >::changeKey(Key first, Key second)
+{
+  if (!has(first)) {
+    throw std::invalid_argument("None key");
+    return;
+  }
+  if (has(second)) {
+    throw std::invalid_argument("Key engaged");
+    return;
+  }
+  add(second, std::move(get(first)));
+  drop(first);
+}
+
+template< class Key, class Value, class Hash, class Equal >
+void permyakov::RobinTable< Key, Value, Hash, Equal >::rehash(size_t length)
+{
+  RobinTable< Key, Value, Hash, Equal > cpy(length);
+  for (const std::pair< Key, Value > & v : *this) {
+    cpy.add(v.first, v.second);
+  }
+  swap(cpy);
+}
+
+template< class Key, class Value, class Hash, class Equal >
 size_t permyakov::RobinTable< Key, Value, Hash, Equal >::size() const noexcept
 {
   return elements;
