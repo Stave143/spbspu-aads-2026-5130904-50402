@@ -4,7 +4,6 @@
 
 namespace permyakov
 {
-  bool isEventsInSpace(permyakov::Manager & man, const std::string first, const std::string second);
   void bin(std::ostream & in, permyakov::Manager & man);
   void sum(std::ostream & in, permyakov::Manager & man);
   void multi(std::ostream & in, permyakov::Manager & man);
