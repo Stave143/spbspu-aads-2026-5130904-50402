@@ -60,8 +60,8 @@ permyakov::RobinNode< Key, Value >::RobinNode():
 template< class Key, class Value, class Hash, class Equal >
 permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable(size_t length):
   data(),
-  hasher_(Hash{}),
-  comparator_(Equal{}),
+  hasher(Hash{}),
+  comparator(Equal{}),
   length(length),
   elements(0),
 {
@@ -117,7 +117,7 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::add(Key k, Value v)
     rehash(!length ? 16 : length * 2);
   }
 
-  size_t i = hasher_(k) % length;
+  size_t i = hasher(k) % length;
   size_t psl = 0;
   while (data[i].engaged) {
     if (data[i].psl < psl) {
@@ -143,10 +143,10 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::drop(Key k)
   if (!has(k)) {
     throw std::invalid_argument("None key");
   }
-  size_t i = hasher_(k) % length;
+  size_t i = hasher(k) % length;
   size_t start = i;
   while (data[i].engaged) {
-    if (comparator_(k, data[i].value.first)) {
+    if (comparator(k, data[i].value.first)) {
       size_t cur = i;
       size_t next = (cur + 1) % length;
       while (data[next].engaged && data[next].psl > 0) {
@@ -257,8 +257,10 @@ template< class Key, class Value, class Hash, class Equal >
 void permyakov::RobinTable< Key, Value, Hash, Equal >::swap(RobinTable & other) noexcept
 {
   data.swap(other.data);
-  std::swap(hasher_, other.hasher_);
-  std::swap(comparator_, other.comparator_);
+  std::swap(hasher, other.hasher);
+  std::swap(comparator, other.comparator);
   std::swap(length, other.length);
   std::swap(elements, other.elements);
 }
+
+#endif
