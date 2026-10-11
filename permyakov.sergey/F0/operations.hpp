@@ -4,18 +4,17 @@
 
 namespace permyakov
 {
-  void bin(std::ostream &, permyakov::Manager &);
-  void sum(std::ostream &, permyakov::Manager &);
-  void multi(std::ostream &, permyakov::Manager &);
-  void make(std::ostream &, permyakov::Manager &);
-  void construct(std::ostream &, permyakov::Manager &);
-  void copy(std::ostream &, permyakov::Manager &);
-  void reverse(std::ostream &, permyakov::Manager &);
-  void get(std::ostream &, permyakov::Manager &);
-  void bayes(std::ostream &, permyakov::Manager &);
-  void deleteS(std::ostream &, permyakov::Manager &);
-
-  
+  bool isEventsInSpace(permyakov::Manager & man, const std::string first, const std::string second);
+  void bin(std::ostream & in, permyakov::Manager & man);
+  void sum(std::ostream & in, permyakov::Manager & man);
+  void multi(std::ostream & in, permyakov::Manager & man);
+  void make(std::ostream & in, permyakov::Manager & man);
+  void construct(std::ostream & in, permyakov::Manager & man);
+  void copy(std::ostream & in, permyakov::Manager & man);
+  void reverse(std::ostream & in, permyakov::Manager & man);
+  void get(std::ostream & in, permyakov::Manager & man);
+  void bayes(std::ostream & in, permyakov::Manager & man);
+  void deleteS(std::ostream & in, permyakov::Manager & man);
 }
 
 #endif
