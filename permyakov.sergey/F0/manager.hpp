@@ -6,25 +6,29 @@
 #include <string>
 #include "hashrobin.hpp"
 
+using evn_t = permyakov::RobinTable< std::string, float >;
+using spc_t = permyakov::RobinTable< std::string, evn_t >;
+
 namespace permyakov
 {
-  using evn_t = RobinTable< std::string, float >;
-  using spc_t = RobinTable< std::string, evn_t >;
-
   class Manager
   {
     std::string filename;
     spc_t spaces;
+    std::istream & output;
 
-    Manager(std::string file, spc_t empTble):
+    Manager(std::string file, spc_t empTble, std::istream & out):
       filename(file),
-      spaces(empTble)
+      spaces(empTble),
+      output(out)
     {}
 
     void parseLine(std::string line);
 
     public:
+      spc_t getSpaces();
       void loadFile();
+      void saveToFile();
   };
 }
 

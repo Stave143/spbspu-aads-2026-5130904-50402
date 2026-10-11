@@ -20,11 +20,14 @@ void permyakov::Manager::parseLine(std::string line) {
   spaces.add(name, events);
 }
 
+spc_t permyakov::Manager::getSpaces() {
+  return spaces;
+}
+
 void permyakov::Manager::loadFile() {
   std::ifstream file(filename);
   if (!file.is_open()) {
     throw std::invalid_argument("None filename");
-    return;
   }
   std::string line;
   size_t lineNumber = 0;
@@ -36,6 +39,25 @@ void permyakov::Manager::loadFile() {
       line.pop_back();
     }
     parseLine(line);
+  }
+}
+
+void permyakov::Manager::saveToFile()
+{
+  std::ofstream file(outputFilename);
+  if (!file.is_open()) {
+    throw std::invalid_argument("None filename");
+  }
+  permyakov::RobinIter < std::string, evn_t > itS(spaces);
+  while(itS.hasNext()) {
+    std::pair< std::string, evn_t > line = *itS;
+    file << line.first() << ' ' << line.second().size();
+    permyakov::RobinIter < std::string, evn_t > itE(line.second());
+    while(itE.hasNext()) {
+      std::pair< std::string, evn_t > event = *itE;
+      file << ' ' << line.first() << ' ' << line.first().size();
+    }
+    file << '\n';
   }
 }
 
