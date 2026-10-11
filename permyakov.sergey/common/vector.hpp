@@ -13,7 +13,7 @@ namespace permyakov
   template< class T > class VCIter;
   template< class T > class Vector
   {
-    T *data_;
+    T * data_;
     size_t size_, capasity_;
     explicit Vector(size_t k);
     public:
@@ -316,7 +316,19 @@ namespace permyakov
     ::operator delete(data);
   }
 
-  template< class T > class VIter;
+  template< class T > class VIter
+  {
+    friend class Vector< T >;
+    T * curr_;
+    public:
+      LIter(T * curr);
+      T & operator*();
+      LIter & operator++();
+      LIter & operator--();
+      bool isIdle();
+      bool operator==(LIter< T > & scndIter);
+      bool operator!=(LIter< T > & scndIter);
+  }
   template< class T > class VCIter;
 }
 
