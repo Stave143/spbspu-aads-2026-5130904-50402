@@ -102,18 +102,57 @@ void permyakov::make(std::ostream & in, permyakov::Manager & man) {
   std::string name;
   size_t n;
   if (in >> name >> n) {
-    spc_t spaces = man.getSpaces();
     evn_t events();
     std::string e;
     float chance;
     for(size_t i = 0; i < n; ++i) {
-      if(in >> e >> float) {
+      if(in >> e >> chance) {
         if (chance < 0 || chance > 1) {
           std::invalid_argument("expected chance from 0 to 1");
         }
         events.add(e, chance);
       } else {
         std::invalid_argument("expected:<event-nameX> <chanceX>");
+      }
+    }
+    permyakov::RobinIter< std::string, float > it(events);
+    float sum = (*it).second();
+    while(hasNext(it)) {
+      it++;
+      sum += (*it).second();
+    }
+    if(sum > 1) {
+      std::out_of_range("sum events in one space bigger than 1");
+    } else if (sum < 1) {
+      events.add("none", 1 - sum);
+    }
+    spc_t spaces = man.getSpaces();
+    if(spaces.has(name)) {
+      spaces.drop(name);
+    }
+    spaces.add(name, events);
+    man.saveToFile();
+  } else {
+    std::invalid_argument("expected:<space-name> <count>");
+  }
+}
+
+void permyakov::construct(std::ostream & in, permyakov::Manager & man) {
+  std::string name;
+  size_t n;
+  if (in >> name >> n) {
+    spc_t spaces = man.getSpaces();
+    evn_t events();
+    std::string s;
+    for(size_t i = 0; i < n; ++i) {
+      if(in >> s) {
+        float chance spaces.get(s).get("true");
+        if (chance < 0 || chance > 1) {
+          std::invalid_argument("expected chance from 0 to 1");
+        }
+        events.add(s, chance);
+      } else {
+        std::invalid_argument("expected:<bin-space-nameX>");
       }
     }
     permyakov::RobinIter< std::string, float > it(events);
@@ -137,7 +176,6 @@ void permyakov::make(std::ostream & in, permyakov::Manager & man) {
   }
 }
 
-void permyakov::construct(std::ostream & in, permyakov::Manager & man);
 void permyakov::copy(std::ostream & in, permyakov::Manager & man);
 void permyakov::reverse(std::ostream & in, permyakov::Manager & man);
 void permyakov::get(std::ostream & in, permyakov::Manager & man);
