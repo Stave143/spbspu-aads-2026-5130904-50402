@@ -1,10 +1,9 @@
 #ifndef HASHROBIN.HPP
 #define HASHROBIN.HPP
-
 #include <algorithm>
 #include <stdexcept>
-#include <utility>
 #include <functional>
+#include <utility>
 #include <memory>
 #include <cstddef>
 #include "hasher.hpp"
@@ -22,6 +21,9 @@ namespace permyakov
     void swap(RobinNode &other);
   };
 
+  template< class Key, class Value, class Hash, class Equal >
+  class RobinIter;
+
   template< class Key, class Value, class Hash = permyakov::SipHasher< Key >, class Equal = std::equal_to< Key > >
   class RobinTable
   {
@@ -30,6 +32,7 @@ namespace permyakov
     Equal comparator;
     size_t length;
     size_t elements;
+    friend class RobinIter< Key, Value, Hash, Equal >;
     public:
       RobinTable();
       explicit RobinTable(size_t length);
@@ -47,6 +50,19 @@ namespace permyakov
       bool isEmpty() const noexcept;
       void clear() noexcept;
       void swap(RobinTable & other) noexcept;  
+  };
+
+  template< class Key, class Value, class Hash = permyakov::SipHasher< Key >, class Equal = std::equal_to< Key > >
+  class RobinIter
+  {
+    Vector< RobinNode< Key, Value > > * data;
+    size_t id;
+    public:
+      RobinIter(RobinTable< class Key, class Value > table);
+      bool hasNext();
+      void next();
+      RobinIter &operator++();
+      std::pair< Key, Value > &operator*() noexcept;
   };
 }
 
@@ -155,8 +171,8 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::drop(Key k)
         cur = next;
         next = (next + 1) % length;
       }
-      data[cur].engaged = false;
       data[cur].psl = 0;
+      data[cur].engaged = false;
       --elements;
       return;
     }
@@ -261,6 +277,53 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::swap(RobinTable & other) 
   std::swap(comparator, other.comparator);
   std::swap(length, other.length);
   std::swap(elements, other.elements);
+}
+
+template< class Key, class Value >
+void permyakov::RobinIter::RobinIter(permyakov::RobinTable< class Key, class Value > table):
+  data(table.data),
+  id(0)
+{
+  size_t j = 0;
+  while (!data[j].engaged()) {
+    if(j >= data.size()) {
+      std::logic_error("Empty table");
+    }
+    ++j;
+  }
+  id = j;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+void permyakov::RobinIter::hasNext() {
+  while (!data[i].engaged()) {
+    ++i;
+    if (i >= data.size()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+void permyakov::RobinIter::next() {
+  while (!data[i].engaged()) {
+    ++i;
+    if (i >= data.size()) {
+      i = 0
+    }
+  }
+}
+
+template< class Key, class Value, class Hash, class Equal >
+permyakov::RobinIter & permyakov::RobinIter::operator++() {
+  next();
+  return *this;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+std::pair< Key, Value > & permyakov::RobinIter::operator*() {
+  return data[i];
 }
 
 #endif
