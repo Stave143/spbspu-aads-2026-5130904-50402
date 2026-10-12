@@ -5,7 +5,7 @@
 int main()
 { 
   using cmd_t = void(*)(std::ostream &, permyakov::Manager &);
-  permyakov::RobinTable< std::string, cmd_t> cmds(11);
+  permyakov::RobinTable< std::string, cmd_t > cmds(11);
   
   cmds.add("bin", permyakov::bin);
   cmds.add("sum", permyakov::sum);

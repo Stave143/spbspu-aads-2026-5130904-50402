@@ -24,7 +24,7 @@ namespace permyakov
   template< class Key, class Value, class Hash, class Equal >
   class RobinIter;
 
-  template< class Key, class Value, class Hash = permyakov::SipHasher< Key >, class Equal = std::equal_to< Key > >
+  template< class Key, class Value, class Hash = permyakov::sipHasher< Key >, class Equal = std::equal_to< Key > >
   class RobinTable
   {
     Vector< RobinNode< Key, Value > > data;
@@ -52,17 +52,17 @@ namespace permyakov
       void swap(RobinTable & other) noexcept;  
   };
 
-  template< class Key, class Value, class Hash = permyakov::SipHasher< Key >, class Equal = std::equal_to< Key > >
+  template< class Key, class Value, class Hash, class Equal >
   class RobinIter
   {
     Vector< RobinNode< Key, Value > > * data;
     size_t id;
     public:
-      RobinIter(RobinTable< class Key, class Value > table);
+      RobinIter(RobinTable< Key, Value, Hash, Equal > table);
       bool hasNext();
       void next();
       RobinIter &operator++();
-      std::pair< Key, Value > &operator*() noexcept;
+      std::pair< Key, Value > & operator*();
   };
 }
 
@@ -79,13 +79,18 @@ permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable(size_t length):
   hasher(Hash{}),
   comparator(Equal{}),
   length(length),
-  elements(0),
+  elements(0)
 {
   data.reserve(length);
   for (size_t i = 0; i < length; ++i) {
     data.pushBack(RobinNode< Key, Value >());
   }
 }
+
+template< class Key, class Value, class Hash, class Equal >
+permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable():
+  RobinTable(8)
+{}
 
 template< class Key, class Value, class Hash, class Equal >
 permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable(std::initializer_list< std::pair< Key, Value > > list):
@@ -96,11 +101,6 @@ permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable(std::initializer_li
     add(k.first, k.second);
   }
 }
-
-template< class Key, class Value, class Hash, class Equal >
-permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable():
-  RobinTable(8)
-{}
 
 template< class Key, class Value, class Hash, class Equal >
 bool permyakov::RobinTable< Key, Value, Hash, Equal >::has(Key k) const noexcept
@@ -129,7 +129,7 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::add(Key k, Value v)
     get(k) = v;
     return;
   }
-  if (elements >= length * max_load_) {
+  if (elements >= length * 0.9) {
     rehash(!length ? 16 : length * 2);
   }
 
@@ -279,8 +279,8 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::swap(RobinTable & other) 
   std::swap(elements, other.elements);
 }
 
-template< class Key, class Value >
-void permyakov::RobinIter::RobinIter(permyakov::RobinTable< class Key, class Value > table):
+template< class Key, class Value, class Hash, class Equal >
+permyakov::RobinIter< Key, Value, Hash, Equal >::RobinIter(permyakov::RobinTable< Key, Value, Hash, Equal > table):
   data(table.data),
   id(0)
 {
@@ -295,10 +295,10 @@ void permyakov::RobinIter::RobinIter(permyakov::RobinTable< class Key, class Val
 }
 
 template< class Key, class Value, class Hash, class Equal >
-void permyakov::RobinIter::hasNext() {
-  while (!data[i].engaged()) {
-    ++i;
-    if (i >= data.size()) {
+bool permyakov::RobinIter< Key, Value, Hash, Equal >::hasNext() {
+  while (!data[id].engaged()) {
+    ++id;
+    if (id >= data.size()) {
       return false;
     }
   }
@@ -306,24 +306,24 @@ void permyakov::RobinIter::hasNext() {
 }
 
 template< class Key, class Value, class Hash, class Equal >
-void permyakov::RobinIter::next() {
-  while (!data[i].engaged()) {
-    ++i;
-    if (i >= data.size()) {
-      i = 0
+void permyakov::RobinIter< Key, Value, Hash, Equal >::next() {
+  while (!data[id].engaged()) {
+    ++id;
+    if (id >= data.size()) {
+      id = 0;
     }
   }
 }
 
 template< class Key, class Value, class Hash, class Equal >
-permyakov::RobinIter & permyakov::RobinIter::operator++() {
+permyakov::RobinIter< Key, Value, Hash, Equal > & permyakov::RobinIter< Key, Value, Hash, Equal >::operator++() {
   next();
   return *this;
 }
 
 template< class Key, class Value, class Hash, class Equal >
-std::pair< Key, Value > & permyakov::RobinIter::operator*() {
-  return data[i];
+std::pair< Key, Value > & permyakov::RobinIter< Key, Value, Hash, Equal >::operator*() {
+  return data[id];
 }
 
 #endif
