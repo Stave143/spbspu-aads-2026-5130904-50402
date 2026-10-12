@@ -1,5 +1,5 @@
-#ifndef MANAGER.CPP
-#define MANAGER.CPP
+#ifndef MANAGER_CPP
+#define MANAGER_CPP
 #include "manager.hpp"
 
 std::istream & permyakov::Manager::getOutput() {

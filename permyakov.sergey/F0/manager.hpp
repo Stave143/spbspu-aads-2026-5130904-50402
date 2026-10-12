@@ -1,5 +1,5 @@
-#ifndef MANAGER.HPP
-#define MANAGER.HPP
+#ifndef MANAGER_HPP
+#define MANAGER_HPP
 #include <iosfwd>
 #include <fstream>
 #include <sstream>

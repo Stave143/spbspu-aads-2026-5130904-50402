@@ -1,5 +1,5 @@
-#ifndef OPERATIONS.HPP
-#define OPERATIONS.HPP
+#ifndef OPERATIONS_HPP
+#define OPERATIONS_HPP
 #include "manager.hpp"
 
 namespace permyakov

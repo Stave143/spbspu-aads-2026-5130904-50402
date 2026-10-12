@@ -1,5 +1,5 @@
-#ifndef OPERATIONS.CPP
-#define OPERATIONS.CPP
+#ifndef OPERATIONS_CPP
+#define OPERATIONS_CPP
 #include "operations.hpp"
 
 void permyakov::bin(std::ostream & in, permyakov::Manager & man) {

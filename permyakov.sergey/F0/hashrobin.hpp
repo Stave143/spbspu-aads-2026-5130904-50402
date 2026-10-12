@@ -1,5 +1,5 @@
-#ifndef HASHROBIN.HPP
-#define HASHROBIN.HPP
+#ifndef HASHROBIN_HPP
+#define HASHROBIN_HPP
 #include <algorithm>
 #include <stdexcept>
 #include <functional>
