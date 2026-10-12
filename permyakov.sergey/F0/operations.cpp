@@ -232,6 +232,22 @@ void permyakov::get(std::ostream & in, permyakov::Manager & man) {
 }
 
 void permyakov::bayes(std::ostream & in, permyakov::Manager & man);
-void permyakov::deleteS(std::ostream & in, permyakov::Manager & man);
+void permyakov::deleteS(std::ostream & in, permyakov::Manager & man) {
+  std::string name;
+  if (in >> name) {
+    spaces.drop(name);
+  } else {
+    std::invalid_argument("expected:<space-name>");
+  }
+}
+
+void permyakov::deleteE(std::ostream & in, permyakov::Manager & man) {
+  std::string s, e;
+  if (in >> s >> e) {
+    spaces.get(s).drop(e);
+  } else {
+    std::invalid_argument("expected:<space-name> <event-name>");
+  }
+}
 
 #endif

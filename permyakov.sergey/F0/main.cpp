@@ -5,7 +5,7 @@
 int main()
 { 
   using cmd_t = void(*)(std::ostream &, permyakov::Manager &);
-  permyakov::RobinTable< std::string, cmd_t> cmds(10);
+  permyakov::RobinTable< std::string, cmd_t> cmds(11);
   
   cmds.add("bin", permyakov::bin);
   cmds.add("sum", permyakov::sum);
@@ -16,7 +16,8 @@ int main()
   cmds.add("reverse", permyakov::reverse);
   cmds.add("get", permyakov::get);
   cmds.add("bayes", permyakov::bayes);
-  cmds.add("delete", permyakov::deleteS);
+  cmds.add("deleteS", permyakov::deleteS);
+  cmds.add("deleteE", permyakov::deleteE);
 
   spc_t table();
   permyakov::Manager manager("spaces.txt", table, std::cout);

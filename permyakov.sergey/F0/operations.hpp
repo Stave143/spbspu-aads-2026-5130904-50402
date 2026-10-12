@@ -14,6 +14,7 @@ namespace permyakov
   void get(std::ostream & in, permyakov::Manager & man);
   void bayes(std::ostream & in, permyakov::Manager & man);
   void deleteS(std::ostream & in, permyakov::Manager & man);
+  void deleteE(std::ostream & in, permyakov::Manager & man);
 }
 
 #endif
