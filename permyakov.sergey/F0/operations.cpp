@@ -215,7 +215,22 @@ void permyakov::reverse(std::ostream & in, permyakov::Manager & man) {
   }
 }
 
-void permyakov::get(std::ostream & in, permyakov::Manager & man);
+void permyakov::get(std::ostream & in, permyakov::Manager & man) {
+  std::string name;
+  if (in >> name) {
+    spc_t spaces = man.getSpaces();
+    permyakov::RobinIter< std::string, float > it(spaces.get(name));
+    std::istream & out = man.getOutput();
+    out << name << ":\n" << (*it).first() << ' ' << (*it).second() << '\n';
+    while (hasNext(it)) {
+      it++;
+      out << (*it).first() << ' ' << (*it).second() << '\n';
+    }
+  } else {
+    std::invalid_argument("expected:<space-name>");
+  }
+}
+
 void permyakov::bayes(std::ostream & in, permyakov::Manager & man);
 void permyakov::deleteS(std::ostream & in, permyakov::Manager & man);
 
