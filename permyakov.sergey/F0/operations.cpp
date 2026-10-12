@@ -231,7 +231,29 @@ void permyakov::get(std::ostream & in, permyakov::Manager & man) {
   }
 }
 
-void permyakov::bayes(std::ostream & in, permyakov::Manager & man);
+void permyakov::bayes(std::ostream & in, permyakov::Manager & man) {
+  std::string name, nameA, nameB;
+  float chanceBA;
+  if (in >> name >> nameA >> nameB >> chanceBA) {
+    spc_t spaces = man.getSpaces();
+    float chanceA = spaces.get(nameA).get("true"), chanceB = spaces.get(nameB).get("true");
+    if (chanceA < 0 || chanceA > 1 || chanceB < 0 || chanceB > 1) {
+      std::invalid_argument("expected chance from 0 to 1");
+    }
+    float chanceAB = chanceBA * chanceA / chanceB;
+    evn_t events();
+    events.add("true", chanceAB);
+    events.add("false", 1 - chanceAB);
+    if (spaces.has(name)) {
+      spaces.drop(name);
+    }
+    spaces.add(name, events);
+    man.saveToFile();
+  } else {
+    std::invalid_argument("expected:<bin-space-name> <bin-space-nameA> <bin-space-nameB> <B|A>");
+  }
+}
+
 void permyakov::deleteS(std::ostream & in, permyakov::Manager & man) {
   std::string name;
   if (in >> name) {
