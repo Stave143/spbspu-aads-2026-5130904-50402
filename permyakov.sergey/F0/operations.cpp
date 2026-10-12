@@ -13,7 +13,7 @@ void permyakov::bin(std::ostream & in, permyakov::Manager & man) {
     evn_t events();
     events.add("true", n);
     events.add("false", 1 - n);
-    if(spaces.has(name)) {
+    if (spaces.has(name)) {
       spaces.drop(name);
     }
     spaces.add(name, events);
@@ -31,14 +31,14 @@ void permyakov::sum(std::ostream & in, permyakov::Manager & man) {
     evn_t source();
     std::string s, e;
     for(size_t i = 0; i < n; ++i) {
-      if(in >> s >> e) {
+      if (in >> s >> e) {
         float chance = spaces.get(s).get(e);
         if (chance < 0 || chance > 1) {
           std::invalid_argument("expected chance from 0 to 1");
         }
         if (source.has(s)) {
           source.get(s) += chance;
-          if(source.get(s) > 1) {
+          if (source.get(s) > 1) {
             std::out_of_range("sum events in one space bigger than 1");
           }
         } else {
@@ -57,7 +57,7 @@ void permyakov::sum(std::ostream & in, permyakov::Manager & man) {
     evn_t events();
     events.add("true", sum);
     events.add("false", 1 - sum);
-    if(spaces.has(name)) {
+    if (spaces.has(name)) {
       spaces.drop(name);
     }
     spaces.add(name, events);
@@ -75,7 +75,7 @@ void permyakov::multi(std::ostream & in, permyakov::Manager & man) {
     float mul = 1;
     std::string s, e;
     for(size_t i = 0; i < n; ++i) {
-      if(in >> s >> e) {
+      if (in >> s >> e) {
         float chance = spaces.get(s).get(e);
         if (chance < 0 || chance > 1) {
           std::invalid_argument("expected chance from 0 to 1");
@@ -88,7 +88,7 @@ void permyakov::multi(std::ostream & in, permyakov::Manager & man) {
     evn_t events();
     events.add("true", mul);
     events.add("false", 1 - mul);
-    if(spaces.has(name)) {
+    if (spaces.has(name)) {
       spaces.drop(name);
     }
     spaces.add(name, events);
@@ -106,7 +106,7 @@ void permyakov::make(std::ostream & in, permyakov::Manager & man) {
     std::string e;
     float chance;
     for(size_t i = 0; i < n; ++i) {
-      if(in >> e >> chance) {
+      if (in >> e >> chance) {
         if (chance < 0 || chance > 1) {
           std::invalid_argument("expected chance from 0 to 1");
         }
@@ -121,13 +121,13 @@ void permyakov::make(std::ostream & in, permyakov::Manager & man) {
       it++;
       sum += (*it).second();
     }
-    if(sum > 1) {
+    if (sum > 1) {
       std::out_of_range("sum events in one space bigger than 1");
     } else if (sum < 1) {
       events.add("none", 1 - sum);
     }
     spc_t spaces = man.getSpaces();
-    if(spaces.has(name)) {
+    if (spaces.has(name)) {
       spaces.drop(name);
     }
     spaces.add(name, events);
@@ -145,7 +145,7 @@ void permyakov::construct(std::ostream & in, permyakov::Manager & man) {
     evn_t events();
     std::string s;
     for(size_t i = 0; i < n; ++i) {
-      if(in >> s) {
+      if (in >> s) {
         float chance spaces.get(s).get("true");
         if (chance < 0 || chance > 1) {
           std::invalid_argument("expected chance from 0 to 1");
@@ -161,12 +161,12 @@ void permyakov::construct(std::ostream & in, permyakov::Manager & man) {
       it++;
       sum += (*it).second();
     }
-    if(sum > 1) {
+    if (sum > 1) {
       std::out_of_range("sum events in one space bigger than 1");
     } else if (sum < 1) {
       events.add("none", 1 - sum);
     }
-    if(spaces.has(name)) {
+    if (spaces.has(name)) {
       spaces.drop(name);
     }
     spaces.add(name, events);
@@ -180,11 +180,14 @@ void permyakov::copy(std::ostream & in, permyakov::Manager & man) {
   std::string name1, name2;
   if (in >> name1 >> name2) {
     spc_t spaces = man.getSpaces();
-    float n = spaces.get(name2).get("true");
+    permyakov::RobinIter< std::string, float > it(spaces.get(name2));
     evn_t events();
-    events.add("true", n);
-    events.add("false", 1 - n);
-    if(spaces.has(name)) {
+    event.add((*it).first(), (*it).second());
+    while (hasNext(it)) {
+      it++;
+      events.add((*it).first(), (*it).second());
+    }
+    if (spaces.has(name)) {
       spaces.drop(name);
     }
     spaces.add(name, events);
@@ -202,7 +205,7 @@ void permyakov::reverse(std::ostream & in, permyakov::Manager & man) {
     evn_t events();
     events.add("true", 1 - n);
     events.add("false", n);
-    if(spaces.has(name)) {
+    if (spaces.has(name)) {
       spaces.drop(name);
     }
     spaces.add(name, events);
