@@ -176,7 +176,24 @@ void permyakov::construct(std::ostream & in, permyakov::Manager & man) {
   }
 }
 
-void permyakov::copy(std::ostream & in, permyakov::Manager & man);
+void permyakov::copy(std::ostream & in, permyakov::Manager & man) {
+  std::string name1, name2;
+  if (in >> name1 >> name2) {
+    spc_t spaces = man.getSpaces();
+    float n = spaces.get(name2).get("true");
+    evn_t events();
+    events.add("true", n);
+    events.add("false", 1 - n);
+    if(spaces.has(name)) {
+      spaces.drop(name);
+    }
+    spaces.add(name, events);
+    man.saveToFile();
+  } else {
+    std::invalid_argument("expected:<space-name1> <space-name2>");
+  }
+}
+
 void permyakov::reverse(std::ostream & in, permyakov::Manager & man);
 void permyakov::get(std::ostream & in, permyakov::Manager & man);
 void permyakov::bayes(std::ostream & in, permyakov::Manager & man);
