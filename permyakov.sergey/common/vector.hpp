@@ -9,11 +9,9 @@
 
 namespace permyakov
 {
-  template< class T > class VIter;
-  template< class T > class VCIter;
   template< class T > class Vector
   {
-    T * data_;
+    T * data;
     size_t size_, capasity_;
     explicit Vector(size_t k);
     public:
@@ -41,28 +39,19 @@ namespace permyakov
       void popBack();
 
       void insert(size_t idx, const T & val);
-      void insert(VIter< T > pos, const T & value);
 
       void erase(size_t idx);
       void erase(size_t beg, size_t end);
-      void erase(VIter< T > pos);
-      void erase(VIter< T > beg, VIter< T > end);
-      void erase(VIter< T > pos, size_t count);
-
-      VIter< T > begin();
-      VIter< T > end();
-      VCIter< T > cbegin() const;
-      VCIter< T > cend() const;
   };
 
   template< class T > Vector< T >::Vector():
-    data_(nullptr),
+    data(nullptr),
     size_(0),
     capasity_(0)
   {}
 
   template< class T > Vector< T >::Vector(size_t k):
-    data_(static_cast< T * >(::operator new(sizeof(T) * k))),
+    data(static_cast< T * >(::operator new(sizeof(T) * k))),
     size_(0),
     capasity_(k)
   {}
@@ -71,17 +60,17 @@ namespace permyakov
     Vector(scnd.size())
   {
     while (size_ < scnd.size()) {
-      new (data_ + size_) T(scnd[size_]);
+      new (data + size_) T(scnd[size_]);
       ++size_;
     }
   }
 
   template< class T > Vector< T >::Vector(Vector< T > && scnd) noexcept:
-    data_(scnd.data_),
+    data(scnd.data),
     size_(scnd.size_),
     capasity_(scnd.capasity_)
   {
-    scnd.data_ = nullptr;
+    scnd.data = nullptr;
     scnd.size_ = 0;
     scnd.capasity_ = 0;
   }
@@ -108,27 +97,27 @@ namespace permyakov
 
   template< class T > Vector< T >::~Vector()
   {
-    clear(date_, size_);
+    clear(data, size_);
   }
 
   template< class T > Vector< T >::Vector(std::initializer_list< T > il):
     Vector(il.size())
   {
     for (auto && v : il) {
-      new (data_ + size_++) T(std::move(v));
+      new (data + size_++) T(std::move(v));
     } 
   }
 
   template< class T > T & Vector< T >::operator[](size_t id) noexcept
   {
     assert(id < size());
-    return data_[id];
+    return data[id];
   }
 
   template< class T > const T & Vector< T >::operator[](size_t id) const noexcept
   {
     assert(id < size());
-    return data_[id];
+    return data[id];
   }
 
   template< class T > size_t Vector< T >::size() const noexcept
@@ -148,29 +137,29 @@ namespace permyakov
 
   template< class T > void Vector< T >::reserve(size_t cap)
   {
-    if (capacity_ >= cap) {
+    if (capasity_ >= cap) {
       return;
     }
     size_t k = 0;
     T * newData = static_cast< T * >(::operator new(sizeof(T) * cap));
     try {
       while (k < size()) {
-        new (newData + k) T(std::move(data_[k]));
+        new (newData + k) T(std::move(data[k]));
         ++k;
       }
     } catch (...) {
       clear(newData, k);
       throw;
     }
-    clear(data_, size_);
-    data_ = newData;
-    capacity_ = cap;
+    clear(data, size_);
+    data = newData;
+    capasity_ = cap;
   }
 
   template< class T > void Vector< T >::swap(Vector< T > & scnd) noexcept
   {
-    std::swap(scnd.data_, data_);
-    std::swap(scnd.capacity_, capacity_);
+    std::swap(scnd.data, data);
+    std::swap(scnd.capasity_, capasity_);
     std::swap(scnd.size_, size_);
   }
 
@@ -190,7 +179,7 @@ namespace permyakov
       size_t newCap = capasity_ == 0 ? 1 : capasity_ * 2;
       reserve(newCap);
     }
-    new (data_ + size_++) T(val);
+    new (data + size_++) T(val);
   }
 
   template< class T > void Vector< T >::popBack()
@@ -210,16 +199,12 @@ namespace permyakov
     }
     ++size_;
     for (size_t i = size_ - 1; i > idx; --i) {
-      new (data + i) T(std::move(data_[i - 1]));
+      new (data + i) T(std::move(data[i - 1]));
       data[i - 1].~T();
     }
-    new (data_ + idx) T(val);
+    new (data + idx) T(val);
   }
 
-  template< class T > void Vector< T >::insert(VIter< T > pos, const T & value)
-  {
-    insert(pos.getIdx() + 1, val);
-  }
 
   template< class T > void Vector< T >::erase(size_t idx)
   {
@@ -228,7 +213,7 @@ namespace permyakov
     }
     data[idx].~T();
     for (size_t i = idx; i < size_ - 1; ++i) {
-      new (data + i) T(std::move(data_[i + 1]));
+      new (data + i) T(std::move(data[i + 1]));
       data[i + 1].~T();
     }
     --size_;
@@ -245,91 +230,11 @@ namespace permyakov
     size_t dif = end - beg;
     for (size_t i = beg; i < size_ - dif; ++i) {
       data[i].~T();
-      new (data + i) T(std::move(data_[i + dif]));
+      new (data + i) T(std::move(data[i + dif]));
       data[i + dif].~T();
     }
     size_ -= dif;
   }
-
-  template< class T > void Vector< T >::erase(VIter< T > pos)
-  {
-    erase(pos.getIdx());
-    if (size_ && pos.gerIdx() == size_) {
-      --pos;
-    }
-  }
-
-  template< class T > void Vector< T >::erase(VIter< T > beg, VIter< T > end)
-  {
-    erase(beg.getIdx(), end.getIdx());
-    if (size_ && beg.gerIdx() == size_) {
-      --beg;
-    }
-    end = beg;
-  }
-
-  template< class T > void Vector< T >::erase(VIter< T > pos, size_t count)
-  {
-    erase(pos.getIdx(), pos.getIdx() + count);
-    if (size_ && pos.gerIdx() == size_) {
-      --pos;
-    }
-  }
-
-  template< class T > VIter< T > Vector< T >::begin()
-  {
-    if (isEmpty()) {
-      throw std::logic_error("Empty vector");
-    }
-    return VIter< T > (data_);
-  }
-
-  template< class T > VIter< T > Vector< T >::end()
-  {
-    if (isEmpty()) {
-      throw std::logic_error("Empty vector");
-    }
-    return VIter< T > (data_ + size_ - 1);
-  }
-
-  template< class T > VCIter< T > Vector< T >::cbegin() const
-  {
-    if (isEmpty()) {
-      throw std::logic_error("Empty vector");
-    }
-    return VCIter< T > (data_);
-  }
-
-  template< class T > VCIter< T > Vector< T >::cend() const
-  {
-    if (isEmpty()) {
-      throw std::logic_error("Empty vector");
-    }
-    return VCIter< T > (data_ + size_ - 1);
-  }
-
-  template< class T > void clear(T *data, size_t cnt)
-  {
-    for (size_t i = 0; i < cnt; ++j) {
-      data[i].~T();
-    }
-    ::operator delete(data);
-  }
-
-  template< class T > class VIter
-  {
-    friend class Vector< T >;
-    T * curr_;
-    public:
-      LIter(T * curr);
-      T & operator*();
-      LIter & operator++();
-      LIter & operator--();
-      bool isIdle();
-      bool operator==(LIter< T > & scndIter);
-      bool operator!=(LIter< T > & scndIter);
-  }
-  template< class T > class VCIter;
 }
 
 #endif
