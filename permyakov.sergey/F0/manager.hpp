@@ -15,18 +15,16 @@ namespace permyakov
   {
     const std::string filename;
     spc_t spaces;
-    std::istream & output;
-
-    Manager(const std::string file, spc_t empTble, std::istream & out):
-      filename(file),
-      spaces(empTble),
-      output(out)
-    {}
-
+    std::ostream & output;
     void parseLine(std::string line);
-
     public:
-      std::istream & getOutput();
+      Manager(const std::string file, spc_t empTble, std::ostream & out):
+        filename(file),
+        spaces(empTble),
+        output(out)
+      {}
+
+      std::ostream & getOutput();
       spc_t & getSpaces();
       void loadFile();
       void saveToFile();

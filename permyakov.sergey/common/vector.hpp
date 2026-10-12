@@ -42,6 +42,8 @@ namespace permyakov
 
       void erase(size_t idx);
       void erase(size_t beg, size_t end);
+
+      void clear(T * beg, size_t size);
   };
 
   template< class T > Vector< T >::Vector():
@@ -228,12 +230,19 @@ namespace permyakov
       throw std::logic_error("Wrong index");
     }
     size_t dif = end - beg;
-    for (size_t i = beg; i < size_ - dif; ++i) {
-      data[i].~T();
-      new (data + i) T(std::move(data[i + dif]));
-      data[i + dif].~T();
+    for (size_t i = beg; i + dif < size_; ++i) {
+        data[i] = std::move(data[i + dif]);
+    }
+    for (size_t i = size_ - dif; i < size_; ++i) {
+        data[i].~T();
     }
     size_ -= dif;
+  }
+
+  template< class T > void Vector< T >::clear(T * beg, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+      beg[i].~T();
+    }
   }
 }
 

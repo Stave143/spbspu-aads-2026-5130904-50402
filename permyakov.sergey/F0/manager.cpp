@@ -2,12 +2,12 @@
 #define MANAGER_CPP
 #include "manager.hpp"
 
-std::istream & permyakov::Manager::getOutput() {
+std::ostream & permyakov::Manager::getOutput() {
   return output;
 }
 
 spc_t & permyakov::Manager::getSpaces() {
-  return *spaces;
+  return spaces;
 }
 
 void permyakov::Manager::parseLine(std::string line) {
@@ -48,24 +48,24 @@ void permyakov::Manager::loadFile() {
 
 void permyakov::Manager::saveToFile()
 {
-  std::ofstream file(outputFilename);
+  std::ofstream file(filename);
   if (!file.is_open()) {
     throw std::invalid_argument("None filename");
   }
   permyakov::RobinIter< std::string, evn_t > itS(spaces);
   while(itS.hasNext()) {
     std::pair< std::string, evn_t > line = *itS;
-    file << line.first() << ' ' << line.second().size();
-    permyakov::RobinIter< std::string, evn_t > itE(line.second());
-    std::pair< std::string, evn_t > event = *itE;
-    file << ' ' << line.first() << ' ' << line.first().size();
+    file << line.first << ' ' << line.second.size();
+    permyakov::RobinIter< std::string, float > itE(line.second);
+    std::pair< std::string, float > event = *itE;
+    file << ' ' << event.first << ' ' << event.first.size();
     while(itE.hasNext()) {
-      itE++;
-      std::pair< std::string, evn_t > event = *itE;
-      file << ' ' << line.first() << ' ' << line.first().size();
+      ++itE;
+      std::pair< std::string, float > event = *itE;
+      file << ' ' << event.first << ' ' << event.first.size();
     }
     file << '\n';
-    itS++;
+    ++itS;
   }
 }
 

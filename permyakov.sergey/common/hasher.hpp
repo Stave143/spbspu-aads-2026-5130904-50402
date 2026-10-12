@@ -8,7 +8,7 @@
 
 namespace permyakov
 {
-  template< class T, clash H = boost::hash2::siphasher_64 > struct sipHasher
+  template< class T, class H = boost::hash2::siphash_64 > struct sipHasher
   {
     size_t operator()(const T & value) const;
   };

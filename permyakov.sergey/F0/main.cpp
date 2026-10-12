@@ -4,7 +4,7 @@
 
 int main()
 { 
-  using cmd_t = void(*)(std::ostream &, permyakov::Manager &);
+  using cmd_t = void(*)(std::istream &, permyakov::Manager &);
   permyakov::RobinTable< std::string, cmd_t > cmds(11);
   
   cmds.add("bin", permyakov::bin);
@@ -19,8 +19,9 @@ int main()
   cmds.add("deleteS", permyakov::deleteS);
   cmds.add("deleteE", permyakov::deleteE);
 
-  spc_t table();
-  permyakov::Manager manager("spaces.txt", table, std::cout);
+  spc_t table{};
+  std::string filename = "spaces.txt";
+  permyakov::Manager manager(filename, table, std::cout);
 
   std::string cmd;
   while (std::cin >> cmd) {
