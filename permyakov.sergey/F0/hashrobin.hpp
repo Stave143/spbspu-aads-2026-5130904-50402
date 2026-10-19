@@ -287,7 +287,7 @@ permyakov::RobinIter< Key, Value, Hash, Equal >::RobinIter(permyakov::RobinTable
   data(&table.data),
   id(0)
 {
-  if (data->isEmpty()) {
+  if (table.isEmpty()) {
     throw std::logic_error("Empty table");
   }
   while (id < data->size() && !(*data)[id].engaged) {
@@ -298,7 +298,7 @@ permyakov::RobinIter< Key, Value, Hash, Equal >::RobinIter(permyakov::RobinTable
 template< class Key, class Value, class Hash, class Equal >
 bool permyakov::RobinIter< Key, Value, Hash, Equal >::hasNext()
 {
-  size_t j = id;
+  size_t j = id + 1;
   while (j < data->size() && !(*data)[j].engaged) {
     ++j;
   }

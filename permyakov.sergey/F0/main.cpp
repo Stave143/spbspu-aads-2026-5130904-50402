@@ -3,7 +3,7 @@
 #include "operations.hpp"
 
 int main()
-{ 
+{
   using cmd_t = void(*)(std::istream &, permyakov::Manager &);
   permyakov::RobinTable< std::string, cmd_t > cmds(11);
   
@@ -20,7 +20,7 @@ int main()
   cmds.add("deleteE", permyakov::deleteE);
 
   spc_t table{};
-  std::string filename = "spaces.txt";
+  std::string filename = "spaces";
   permyakov::Manager manager(filename, table, std::cout);
 
   std::string cmd;
@@ -32,9 +32,9 @@ int main()
       }
       manager.loadFile();
       cmds.get(cmd)(std::cin, manager);
-      std::cout << '\n';
     } catch (const std::exception &e) {
       std::cout << e.what() << '\n';
+      std::cin.clear(std::cin.rdstate() & ~std::ios::failbit);
       std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
     }
   }

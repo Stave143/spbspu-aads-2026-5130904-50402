@@ -22,21 +22,19 @@ void permyakov::Manager::parseLine(std::string line) {
     if(iline >> n) {
       events.add(s, n);
     } else {
-      std::invalid_argument("Сorrupted file");
+      throw std::invalid_argument("Сorrupted file");
     }
   }
   spaces.add(name, events);
 }
 
 void permyakov::Manager::loadFile() {
-  std::ifstream file(filename);
+  std::ifstream file(filename, std::ios::in);
   if (!file.is_open()) {
     throw std::invalid_argument("None filename");
   }
   std::string line;
-  size_t lineNumber = 0;
   while (std::getline(file, line)) {
-    ++lineNumber;
     if (line.empty()) {
       continue;
     } else if (line.back() == '\r') {
@@ -48,24 +46,38 @@ void permyakov::Manager::loadFile() {
 
 void permyakov::Manager::saveToFile()
 {
-  std::ofstream file(filename);
+  if (spaces.isEmpty()) {
+  	return;
+  }
+  std::ofstream file(filename, std::ios::out);
   if (!file.is_open()) {
     throw std::invalid_argument("None filename");
   }
   permyakov::RobinIter< std::string, evn_t > itS(spaces);
+  std::pair< std::string, evn_t > line = *itS;
+  file << line.first << ' ' << line.second.size();
+  permyakov::RobinIter< std::string, float > itE(line.second);
+  std::pair< std::string, float > event = *itE;
+  file << ' ' << event.first << ' ' << event.second;
+  while(itE.hasNext()) {
+    ++itE;
+    std::pair< std::string, float > event = *itE;
+    file << ' ' << event.first << ' ' << event.second;
+  }
+  file << '\n';
   while(itS.hasNext()) {
+    ++itS;
     std::pair< std::string, evn_t > line = *itS;
     file << line.first << ' ' << line.second.size();
     permyakov::RobinIter< std::string, float > itE(line.second);
     std::pair< std::string, float > event = *itE;
-    file << ' ' << event.first << ' ' << event.first.size();
+    file << ' ' << event.first << ' ' << event.second;
     while(itE.hasNext()) {
       ++itE;
       std::pair< std::string, float > event = *itE;
-      file << ' ' << event.first << ' ' << event.first.size();
+      file << ' ' << event.first << ' ' << event.second;
     }
     file << '\n';
-    ++itS;
   }
 }
 

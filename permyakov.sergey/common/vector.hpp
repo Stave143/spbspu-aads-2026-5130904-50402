@@ -100,6 +100,7 @@ namespace permyakov
   template< class T > Vector< T >::~Vector()
   {
     clear(data, size_);
+    ::operator delete(data);
   }
 
   template< class T > Vector< T >::Vector(std::initializer_list< T > il):
