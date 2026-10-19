@@ -19,6 +19,7 @@ namespace permyakov
     size_t psl;
     bool engaged;
     RobinNode();
+    RobinNode(Key k, Value v, size_t psl_);
     void swap(RobinNode &other);
   };
 
@@ -44,7 +45,6 @@ namespace permyakov
       void drop(Key k);
       Value & get(Key k);
       const Value & get(Key k) const;
-      void changeKey(Key first, Key second);
       void rehash(size_t length);
 
       size_t size() const noexcept;
@@ -73,6 +73,27 @@ permyakov::RobinNode< Key, Value >::RobinNode():
   psl(0),
   engaged(false)
 {}
+
+template< class Key, class Value >
+permyakov::RobinNode< Key, Value >::RobinNode(Key k, Value v, size_t psl_):
+  value(std::pair< Key, Value > (k, v)),
+  psl(psl_),
+  engaged(true)
+{}
+
+template< class Key, class Value >
+void permyakov::RobinNode< Key, Value >::swap(RobinNode &other)
+{
+  std::pair< Key, Value > value_ = value;
+  size_t psl_ = psl;
+  bool engaged_ = engaged;
+  value = other.value;
+  psl = other.psl;
+  engaged = other.engaged;
+  other.value = value_;
+  other.psl = psl_;
+  other.engaged = engaged_;
+}
 
 template< class Key, class Value, class Hash, class Equal >
 permyakov::RobinTable< Key, Value, Hash, Equal >::RobinTable(size_t length):
@@ -126,29 +147,34 @@ bool permyakov::RobinTable< Key, Value, Hash, Equal >::has(Key k) const noexcept
 template< class Key, class Value, class Hash, class Equal >
 void permyakov::RobinTable< Key, Value, Hash, Equal >::add(Key k, Value v)
 {
-  if (has(k)) {
-    get(k) = v;
-    return;
+  if (!data.isEmpty()) {
+    size_t i = hasher(k) % length;
+    size_t start = i;
+    while (data[i].engaged) {
+      if (comparator(k, data[i].value.first)) {
+        data[i].value.second = v;
+        return;
+      }
+      i = (i + 1) % length;
+      if (i == start) {
+        break;
+      }
+    }
   }
   if (elements >= length * 0.9) {
     rehash(!length ? 16 : length * 2);
   }
-
   size_t i = hasher(k) % length;
-  size_t psl = 0;
+  RobinNode< Key, Value > node_ = RobinNode< Key, Value >(k, v, 0);
   while (data[i].engaged) {
-    if (data[i].psl < psl) {
-      std::swap(k, data[i].value.first);
-      std::swap(v, data[i].value.second);
-      std::swap(psl, data[i].psl);
+    if (data[i].psl < node_.psl) {
+      node_.swap(data[i]);
     }
     i = (i + 1) % length;
-    ++psl;
+    node_.psl++;
   }
-  data[i].value = {k, v};
-  data[i].psl = psl;
-  data[i].engaged = true;
-  ++elements;
+  node_.swap(data[i]);
+  ++elements; 
 }
 
 template< class Key, class Value, class Hash, class Equal >
@@ -156,9 +182,6 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::drop(Key k)
 {
   if (data.isEmpty()) {
     return;
-  }
-  if (!has(k)) {
-    throw std::invalid_argument("None key");
   }
   size_t i = hasher(k) % length;
   size_t start = i;
@@ -187,9 +210,6 @@ void permyakov::RobinTable< Key, Value, Hash, Equal >::drop(Key k)
 template< class Key, class Value, class Hash, class Equal >
 Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k)
 {
-  if (!has(k)) {
-    throw std::invalid_argument("None key");
-  }
   size_t i = hasher(k) % length;
   size_t start = i;
   while (data[i].engaged) {
@@ -207,9 +227,6 @@ Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k)
 template< class Key, class Value, class Hash, class Equal >
 const Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k) const
 {
-  if (!has(k)) {
-    throw std::invalid_argument("None key");
-  }
   size_t i = hasher(k) % length;
   size_t start = i;
   while (data[i].engaged) {
@@ -224,20 +241,6 @@ const Value &permyakov::RobinTable< Key, Value, Hash, Equal >::get(Key k) const
   throw std::invalid_argument("None key");
 }
 
-template< class Key, class Value, class Hash, class Equal >
-void permyakov::RobinTable< Key, Value, Hash, Equal >::changeKey(Key first, Key second)
-{
-  if (!has(first)) {
-    throw std::invalid_argument("None key");
-    return;
-  }
-  if (has(second)) {
-    throw std::invalid_argument("Key engaged");
-    return;
-  }
-  add(second, std::move(get(first)));
-  drop(first);
-}
 
 template< class Key, class Value, class Hash, class Equal >
 void permyakov::RobinTable< Key, Value, Hash, Equal >::rehash(size_t len)
